@@ -5,8 +5,8 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
-} from '@nestjs/common';
+  Delete, HttpException, HttpStatus
+} from "@nestjs/common";
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -21,8 +21,8 @@ export class UsersController {
   }
 
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  async findAll() {
+    return await this.usersService.findAll();
   }
 
   @Get(':id')
@@ -37,6 +37,7 @@ export class UsersController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
+    throw new HttpException("exception", HttpStatus.BAD_REQUEST);
     return this.usersService.remove(+id);
   }
 }
