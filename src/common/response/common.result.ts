@@ -8,8 +8,7 @@ export class CommonResult {
     this.code = code;
     this.msg = msg;
   }
-  status: number;
-  success: boolean;
-  code: number;
-  msg: string;
+  private success: boolean;
+  private code: number;
+  private msg: string;
 }

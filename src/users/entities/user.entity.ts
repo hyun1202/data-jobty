@@ -15,9 +15,9 @@ export class User {
   @Column()
   status : number
   @Column()
-  last_login_dt : string
+  last_login_dt : Date
   @Column()
-  reg_dt : string
+  reg_dt : Date
   @Column()
-  update_dt : string
+  update_dt : Date
 }

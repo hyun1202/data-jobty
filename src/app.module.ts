@@ -2,22 +2,28 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
-import { ConfigModule, ConfigService } from "@nestjs/config";
+import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { TypeOrmConfigService } from "./config/typeorm.config.service";
 
 @Module({
   imports: [
     UsersModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: [`${__dirname}/config/env/.${process.env.NODE_ENV}.env`],
+      envFilePath: `.env.${process.env.NODE_ENV}` || '.env',
       load: [],
     }),
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      useClass: TypeOrmConfigService,
-      inject: [ConfigService]
+    TypeOrmModule.forRoot({
+      type: 'mariadb',
+      host: process.env.DB_HOST,
+      port: parseInt(process.env.DB_PORT),
+      username: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
+      entities: ['dist/**/*.entity{.ts, .js}'],
+      logging: true,
+      synchronize: false,
+      autoLoadEntities: true,
     }),
   ],
   controllers: [AppController],

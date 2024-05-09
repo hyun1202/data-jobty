@@ -6,5 +6,5 @@ export class CustomException extends HttpException{
     super(errorCode.msg, errorCode.status);
     this.errorCode = errorCode;
   }
-  private errorCode: TErrorCode;
+  readonly errorCode: TErrorCode;
 }

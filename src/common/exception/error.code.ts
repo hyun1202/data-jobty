@@ -6,28 +6,28 @@ export type TErrorCode = {
 }
 
 export class ErrorCode {
-  FAIL: TErrorCode = {
+  static FAIL: TErrorCode = {
     status: 500,
     code: -1,
     msg: "실패했습니다.",
   }
 
-  REQUIRED_FIELD: TErrorCode = {
+  static REQUIRED_FIELD: TErrorCode = {
     code: -1,
     msg: "실패했습니다.",
   }
 
-  ACCOUNT_VALIDATION_FAILED: TErrorCode = {
+  static ACCOUNT_VALIDATION_FAILED: TErrorCode = {
     code: 10,
     msg: "자격증명 중 에러가 발생했습니다. 잠시 후 다시 시도해주세요.",
   }
 
-  OPERATION_NOT_AUTHORIZED: TErrorCode = {
+  static OPERATION_NOT_AUTHORIZED: TErrorCode = {
     code: 6000,
     msg: "로그인이 안되어있거나 만료된 토큰입니다.",
   }
 
-  EMAIL_DUPLICATED: TErrorCode = {
+  static EMAIL_DUPLICATED: TErrorCode = {
     code: 6001,
     msg: "중복된 아이디입니다.",
   }
