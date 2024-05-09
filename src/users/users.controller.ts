@@ -10,6 +10,8 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { CustomException } from "../common/exception/custom.exception";
+import { ErrorCode } from "../common/exception/error.code";
 
 @Controller('users')
 export class UsersController {
@@ -37,6 +39,7 @@ export class UsersController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
+    throw new CustomException(new ErrorCode().REQUIRED_FIELD);
     return this.usersService.remove(+id);
   }
 }
