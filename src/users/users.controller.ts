@@ -12,7 +12,9 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CustomException } from "../common/exception/custom.exception";
 import { ErrorCode } from "../common/exception/error.code";
+import { ApiTags } from "@nestjs/swagger";
 
+@ApiTags('user')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
