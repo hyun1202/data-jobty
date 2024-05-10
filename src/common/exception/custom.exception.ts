@@ -1,10 +1,10 @@
-import { TErrorCode } from "./error.code";
+import { TCommonCode } from "./error.code";
 import { HttpException } from "@nestjs/common";
 
 export class CustomException extends HttpException{
-  constructor(errorCode: TErrorCode) {
-    super(errorCode.msg, errorCode.status);
+  constructor(errorCode: TCommonCode) {
+    super(errorCode, errorCode.status);
     this.errorCode = errorCode;
   }
-  readonly errorCode: TErrorCode;
+  readonly errorCode: TCommonCode;
 }

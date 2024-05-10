@@ -41,7 +41,7 @@ export class UsersController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    throw new CustomException(ErrorCode.REQUIRED_FIELD);
+    throw new CustomException(ErrorCode.ACCOUNT_VALIDATION_FAILED);
     return this.usersService.remove(+id);
   }
 }
