@@ -18,7 +18,7 @@ export class ErrorCode {
   }
 
   static ACCOUNT_VALIDATION_FAILED: TCommonCode = {
-    code: 10,
+    code: 11,
     msg: "자격증명 중 에러가 발생했습니다. 잠시 후 다시 시도해주세요.",
   }
 

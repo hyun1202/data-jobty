@@ -8,7 +8,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: any, host: ArgumentsHost): any {
     const status = exception.getStatus() || 200;
     const message = exception.message;
-    const errorCode: TCommonCode = exception.errorCode;
+    const errorCode: TCommonCode = exception?.errorCode;
 
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
@@ -16,7 +16,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     console.log(`status: ${status}`);
     console.log(`url: ${request.url}: ${request.method}()`);
-    console.log(`errorCode: ${errorCode.code}, msg: ${errorCode.msg}`);
+    console.log(`errorCode: ${errorCode?.code}, msg: ${errorCode?.msg}`);
 
     const res = CommonResult.getFailResult(errorCode);
 
