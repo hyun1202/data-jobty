@@ -4,6 +4,8 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { AuthModule } from './auth/auth.module';
+import { EmailService } from './email/email.service';
+import { MailerModule } from "@nestjs-modules/mailer";
 
 @Module({
   imports: [
@@ -20,10 +22,21 @@ import { AuthModule } from './auth/auth.module';
       subscribers: [],
       migrations: [],
     }),
+    MailerModule.forRoot({
+      transport:{
+        host: 'smtp.example.com',
+        port:587,
+        secure:false,
+        auth:{
+          user:'jobty',
+          pass: 'jobty',
+        },
+      },
+    }),
     UsersModule,
-    AuthModule
+    AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, EmailService],
 })
 export class AppModule {}

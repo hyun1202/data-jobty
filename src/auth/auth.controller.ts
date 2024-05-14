@@ -4,11 +4,12 @@ import { AuthCredentialsDto } from "./dto/auth-credentials.dto";
 import { AuthGuard } from "@nestjs/passport";
 import { GetUser } from "./get-user.decorator";
 import { User } from "../users/entities/user.entity";
+import { EmailService } from "../email/email.service";
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {
-  }
+  constructor(private authService: AuthService) {}
+
   @Post('/signup')
   signUp(@Body() authcredentialsDto: AuthCredentialsDto): Promise<void> {
     return this.authService.signUp(authcredentialsDto)
