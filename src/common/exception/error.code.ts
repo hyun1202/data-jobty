@@ -31,4 +31,14 @@ export class ErrorCode {
     code: 6001,
     msg: "중복된 아이디입니다.",
   }
+
+  static EXISTS_DOMAIN: TCommonCode = {
+    code: 7000,
+    msg: "이미 해당 계정에 도메인이 존재합니다.",
+  }
+
+  static DOMAIN_DUPLICATED: TCommonCode = {
+    code: 7001,
+    msg: "중복된 도메인입니다. 다른 도메인을 입력해주세요.",
+  }
 }

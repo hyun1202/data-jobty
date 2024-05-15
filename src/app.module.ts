@@ -6,6 +6,7 @@ import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { DetailModule } from './settings/detail/detail.module';
 import { AuthModule } from './auth/auth.module';
+import { TemplateModule } from './settings/template/template.module';
 
 @Module({
   imports: [
@@ -22,13 +23,14 @@ import { AuthModule } from './auth/auth.module';
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: ['dist/**/*.entity{.ts, .js}'],
+      entities: ['dist/**/*.entity.{ts,js}'],
       logging: true,
-      synchronize: false,
+      synchronize: true,
       autoLoadEntities: true,
     }),
     DetailModule,
-    AuthModule
+    AuthModule,
+    TemplateModule
   ],
   controllers: [AppController],
   providers: [AppService],

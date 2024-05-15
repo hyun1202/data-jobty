@@ -1,18 +1,23 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from "@nestjs/common";
 import { DetailService } from './detail.service';
 import { CreateDetailDto } from './dto/create-detail.dto';
 import { UpdateDetailDto } from './dto/update-detail.dto';
 import { ValidationPipe } from "../../common/validation/validation.pipe";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { GetUser } from "../../auth/get-user.decorator";
+import { User } from "../../users/entities/user.entity";
+import { AuthGuard } from "@nestjs/passport";
 
-@ApiTags('detail')
-@Controller('detail')
+@ApiTags('setting-detail')
+@Controller('setting/detail')
 export class DetailController {
   constructor(private readonly detailService: DetailService) {}
 
   @Post()
-  create(@Body(new ValidationPipe()) createDetailDto: CreateDetailDto) {
-    return this.detailService.create(createDetailDto);
+  @UseGuards(AuthGuard())
+  @ApiBearerAuth()
+  async create(@GetUser() user: User, @Body(new ValidationPipe()) createDetailDto: CreateDetailDto) {
+    return await this.detailService.create(user, createDetailDto);
   }
 
   @Get()
@@ -22,7 +27,7 @@ export class DetailController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.detailService.findOne(+id);
+    return this.detailService.findOne(id);
   }
 
   @Patch(':id')
