@@ -6,11 +6,15 @@ import {
   Patch,
   Param,
   Delete,
-} from '@nestjs/common';
+} from "@nestjs/common";
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { CustomException } from "../common/exception/custom.exception";
+import { ErrorCode } from "../common/exception/error.code";
+import { ApiTags } from "@nestjs/swagger";
 
+@ApiTags('user')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -37,6 +41,7 @@ export class UsersController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
+    throw new CustomException(ErrorCode.ACCOUNT_VALIDATION_FAILED);
     return this.usersService.remove(+id);
   }
 }
