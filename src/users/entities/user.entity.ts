@@ -46,4 +46,9 @@ export class User {
   reg_dt : Date
   @CreateDateColumn()
   update_dt : Date
+  @Column({ nullable: true })
+  verificationCode: string;
+
+  @Column({ default: false })
+  isVerified: boolean;
 }
