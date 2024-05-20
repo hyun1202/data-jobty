@@ -6,6 +6,9 @@ import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { DetailModule } from './settings/detail/detail.module';
 import { AuthModule } from './auth/auth.module';
+import { EmailService } from './email/email.service';
+import { MailerModule } from "@nestjs-modules/mailer";
+import { BoardsModule } from './boards/boards.module';
 import { TemplateModule } from './settings/template/template.module';
 
 @Module({
@@ -28,11 +31,26 @@ import { TemplateModule } from './settings/template/template.module';
       synchronize: true,
       autoLoadEntities: true,
     }),
+    MailerModule.forRoot({
+      transport:{
+        host: 'smtp.example.com',
+        port:587,
+        secure:false,
+        auth:{
+          user:'jobty',
+          pass: 'jobty',
+        },
+      },
+    }),
+    UsersModule,
+    AuthModule,
     DetailModule,
     AuthModule,
-    TemplateModule
+    TemplateModule,
+    AuthModule,
+    BoardsModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, EmailService],
 })
 export class AppModule {}

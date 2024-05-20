@@ -31,4 +31,11 @@ async createUser(authCredentialsDto: AuthCredentialsDto): Promise<void>{
       .getMany();
     return allUser;
   }
+  async saveVerificationCode(email: string, code: string): Promise<void> {
+    await this.update({ email }, { verificationCode: code });
+  }
+
+  async updateVerificationStatus(email: string, isVerified: boolean): Promise<void> {
+    await this.update({ email }, { isVerified });
+  }
 }
