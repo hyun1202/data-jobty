@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, FindOptionsWhere, Repository } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import { Setting } from "./entities/detail.entity";
 import { User } from "../../users/entities/user.entity";
 

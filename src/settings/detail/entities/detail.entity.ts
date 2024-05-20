@@ -1,9 +1,10 @@
 import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from "typeorm";
 import { User } from "../../../users/entities/user.entity";
 import { Template } from "../../template/entities/template.entity";
+import { Timestamped } from "../../../common/timestamped/common-timestamped";
 
 @Entity({ name : "setting" })
-export class Setting {
+export class Setting extends Timestamped{
   @PrimaryColumn()
   domain: string;
   @OneToOne(() => User)

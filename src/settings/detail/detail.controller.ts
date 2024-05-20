@@ -1,26 +1,30 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from "@nestjs/common";
-import { DetailService } from './detail.service';
-import { CreateDetailDto } from './dto/create-detail.dto';
-import { UpdateDetailDto } from './dto/update-detail.dto';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from "@nestjs/common";
+import { DetailService } from "./detail.service";
+import { CreateDetailDto } from "./dto/create-detail.dto";
+import { UpdateDetailDto } from "./dto/update-detail.dto";
 import { ValidationPipe } from "../../common/validation/validation.pipe";
-import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { GetUser } from "../../auth/get-user.decorator";
 import { User } from "../../users/entities/user.entity";
 import { AuthGuard } from "@nestjs/passport";
 
 @ApiTags('setting-detail')
 @Controller('setting/detail')
+@UseGuards(AuthGuard())
+@ApiBearerAuth()
 export class DetailController {
   constructor(private readonly detailService: DetailService) {}
 
   @Post()
-  @UseGuards(AuthGuard())
-  @ApiBearerAuth()
+  @ApiOperation({
+    summary: "도메인 저장",
+    description: "토큰 정보로 도메인 정보를 저장한다."
+  })
   async create(@GetUser() user: User, @Body(new ValidationPipe()) createDetailDto: CreateDetailDto) {
     return await this.detailService.create(user, createDetailDto);
   }
 
-  @Get()
+  @Post()
   findAll() {
     return this.detailService.findAll();
   }
