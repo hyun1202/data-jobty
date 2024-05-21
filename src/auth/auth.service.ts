@@ -25,7 +25,7 @@ export class AuthService {
     // 이메일 보내기
     await this.emailService.sendVerificationCode(email, verificationCode);
     // 사용자 생성
-    await this.usersRepository.createUser({ ...authCredentialsDto, verificationCode });
+    await this.usersRepository.createUser({ ...authCredentialsDto });
   }
 
   async signIn(authCredentialsDto: AuthCredentialsDto): Promise<{ accessToken: string }> {

@@ -27,7 +27,7 @@ import { BoardsModule } from './boards/boards.module';
       database: process.env.DB_NAME,
       entities: ['dist/**/*.entity{.ts, .js}'],
       logging: true,
-      synchronize: false,
+      synchronize: true,
       autoLoadEntities: true,
     }),
     MailerModule.forRoot({
