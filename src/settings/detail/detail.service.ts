@@ -19,12 +19,11 @@ export class DetailService {
     return new ResponseDetailDto(await this.detailRepository.save(setting));
   }
 
-  findAll() {
-    return `This action returns all detail`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} detail`;
+  remove(user: User, domain: string) {
+    // TODO 회원 탈퇴 처리시 추가할 로직
+    // 1. 메뉴 및 블로그 게시글 삭제, 설정 데이터 삭제
+    // 2. 회원 탈퇴 처리
+    return null;
   }
 
   async createDomain(user: User, createDomainDto: CreateDomainDto) {
@@ -53,7 +52,7 @@ export class DetailService {
   async findDomain(domain: string) {
     const setting: Setting = await this.detailRepository.findOneBy({ domain: domain });
     if (setting == null) {
-      throw new CustomException(ErrorCode.DOMAIN_NOTFOUND);
+      throw new CustomException(ErrorCode.DOMAIN_NOT_FOUND);
     }
     return setting;
   }
@@ -66,12 +65,12 @@ export class DetailService {
   async findOneByDomainAndMemberId(domain: string, memberId: string) : Promise<Setting>{
     const setting = await this.detailRepository.findAll({where: {domain, memberId}}) as Setting;
     if (setting == null) {
-      throw new CustomException(ErrorCode.DOMAIN_NOTFOUND);
+      throw new CustomException(ErrorCode.ACCOUNT_DOMAIN_NOT_FOUND);
     }
     return setting;
   }
 
-  private async existsDomain(domain: string) {
+  async existsDomain(domain: string) {
     // 도메인 중복 확인
     if (await this.detailRepository.existsBy({ domain })) {
       throw new CustomException(ErrorCode.DOMAIN_DUPLICATED);
@@ -83,7 +82,5 @@ export class DetailService {
     if (await this.detailRepository.findAll({where: {memberId}, select: selectOptions.Exists})) {
       throw new CustomException(ErrorCode.EXISTS_DOMAIN);
     }
-
-
   }
 }

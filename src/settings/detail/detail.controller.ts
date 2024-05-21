@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from "@nestjs/common";
 import { DetailService } from "./detail.service";
 import { CreateDetailDto, CreateDomainDto } from "./dto/create-detail.dto";
 import { UpdateDetailDto } from "./dto/update-detail.dto";
@@ -7,6 +7,7 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { GetUser } from "../../auth/get-user.decorator";
 import { User } from "../../users/entities/user.entity";
 import { AuthGuard } from "@nestjs/passport";
+import { ResponseDetailDto } from "./dto/response-detail.dto";
 
 @ApiTags('setting-detail')
 @Controller('setting')
@@ -30,18 +31,35 @@ export class DetailController {
     summary: "도메인 저장",
     description: "토큰 정보로 도메인 정보를 저장한다."
   })
-  @Post()
+  @Post('/domain')
   async createDomain(@GetUser() user: User, @Body(new ValidationPipe()) createDomainDto: CreateDomainDto) {
-    return this.detailService.createDomain(user, createDomainDto);
+    return await this.detailService.createDomain(user, createDomainDto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.detailService.findDomain(id);
+  @ApiOperation({
+    summary: "도메인 중복 확인",
+    description: "도메인이 중복되었는지 확인한다."
+  })
+  @Get('/domain')
+  checkDomain(@Query('q') domain: string) {
+    return this.detailService.existsDomain(domain);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.detailService.remove(+id);
+  @ApiOperation({
+    summary: "설정 정보 조회",
+    description: "토큰 정보의 회원의 설정 정보를 조회한다."
+  })
+  @Get(':domain')
+  async getSetting(@GetUser() user: User, @Param('domain') domain: string) {
+    return new ResponseDetailDto(await this.detailService.findOneByDomainAndMemberId(domain, user.id));
+  }
+
+  @ApiOperation({
+    summary: "회원 탈퇴",
+    description: "토큰 정보의 회원을 삭제한다."
+  })
+  @Delete()
+  remove(@GetUser() user: User, @Param('domain') domain: string) {
+    return this.detailService.remove(user, domain);
   }
 }
