@@ -41,4 +41,10 @@ export class ErrorCode {
     code: 7001,
     msg: "중복된 도메인입니다. 다른 도메인을 입력해주세요.",
   }
+
+  static DOMAIN_NOTFOUND: TCommonCode = {
+    code: 7002,
+    msg: "해당 계정에 도메인이 없습니다. 생성 후 다시 시도해주세요.",
+  }
+
 }

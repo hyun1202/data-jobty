@@ -7,7 +7,7 @@ export class ResponseDetailDto {
     this.favicon_img = detail.faviconImg;
     this.blog_name = detail.blogName;
     this.blog_description = detail.blogDescription;
-    this.blog_keyword = detail.blogKeyword.split(',');
+    this.blog_keyword = detail.blogKeyword != null? detail.blogKeyword.split(',') : [];
   }
   @ApiProperty({description: "도메인"})
   domain: string;

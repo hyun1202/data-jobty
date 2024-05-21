@@ -11,13 +11,13 @@ export class Setting extends Timestamped{
   @OneToOne(() => User)
   @JoinColumn({name: "member_id"})
   user: User;
-  @Column({name: "favicon_img"})
+  @Column({name: "favicon_img", nullable: true})
   faviconImg: string;
-  @Column({name: "blog_name"})
+  @Column({name: "blog_name", nullable: true})
   blogName: string;
-  @Column({name: "blog_description"})
+  @Column({name: "blog_description", nullable: true})
   blogDescription: string;
-  @Column({name: "blog_keyword"})
+  @Column({name: "blog_keyword", nullable: true})
   blogKeyword: string;
   @OneToOne(() => Template)
   @JoinColumn({name: "template_id"})
