@@ -27,9 +27,24 @@ export class ErrorCode {
     msg: "로그인이 안되어있거나 만료된 토큰입니다.",
   }
 
-  static EMAIL_DUPLICATED: TCommonCode = {
+  static DUPLICATED_EMAIL: TCommonCode = {
     code: 6001,
     msg: "중복된 아이디입니다.",
+  }
+
+  static INVALID_VERIFICATION: TCommonCode = {
+    code: 6002,
+    msg: "유효하지 않은 인증 코드입니다.",
+  }
+
+  static INCORRECT_PASSWORD: TCommonCode = {
+    code: 6005,
+    msg: "계정을 찾을 수 없거나 아이디 또는 비밀번호가 맞지 않습니다.\", \"비밀번호가 맞지 않습니다.",
+  }
+
+  static NOT_ACTIVATED_ACCOUNT: TCommonCode = {
+    code: 6011,
+    msg: "메일 인증이 안된 계정입니다. 메일 인증 완료 후 다시 시도해주세요.",
   }
 
   static EXISTS_DOMAIN: TCommonCode = {

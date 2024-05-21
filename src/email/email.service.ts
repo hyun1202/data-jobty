@@ -8,12 +8,12 @@ export class EmailService {
   constructor() {
     this.transporter = nodemailer.createTransport({
       host: 'smtp.gmail.com',
-      port: 465,
+      port: 587,
       secure: true, // SSL 보안 연결 사용
       service: 'gmail',
       auth: {
         user: 'hyun73874@gmail.com',
-        pass: 'toyconde121!',
+        pass: 'vvdlfvubqrubcjbj',
       },
     });
   }
@@ -21,7 +21,7 @@ export class EmailService {
   async sendVerificationCode(to: string, code: string): Promise<void> {
     try {
       await this.transporter.sendMail({
-        from: 'hyun73874@gmail.com',
+        from: 'jobty@jobty.com',
         to,
         subject: '인증번호',
         text: `인증번호는  ${code} 입니다.`,

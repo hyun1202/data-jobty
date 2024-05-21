@@ -18,9 +18,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   async validate(payload) {
     const {email} = payload;
     const user: User = await this.usersRepository.findOneBy({email:email});
-
+    // TODO DTO 변환
 
     if (!user) {
+      // TODO CustomException 적용
       throw new UnauthorizedException();
     }
     return user;

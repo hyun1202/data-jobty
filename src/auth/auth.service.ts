@@ -1,9 +1,11 @@
 import { Injectable, UnauthorizedException } from "@nestjs/common";
-import { AuthCredentialsDto } from "./dto/auth-credentials.dto";
+import { AuthCredentialsDto, VerificationDto } from "./dto/auth-credentials.dto";
 import { UsersRepository } from "../users/users.repository";
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from "@nestjs/jwt";
 import { EmailService } from "../email/email.service";
+import { CustomException } from "../common/exception/custom.exception";
+import { ErrorCode } from "../common/exception/error.code";
 
 @Injectable()
 export class AuthService {
@@ -18,7 +20,7 @@ export class AuthService {
     // 이메일이 이미 존재하는지 확인
     const existingUser = await this.usersRepository.findOneBy({email});
     if (existingUser) {
-      throw new Error('Email already exists');
+      throw new CustomException(ErrorCode.DUPLICATED_EMAIL);
     }
     // 이메일 인증 코드 생성
     const verificationCode = Math.floor(Math.random() * 10000).toString();
@@ -34,27 +36,25 @@ export class AuthService {
 
     if (user && (await bcrypt.compare(pwd, user.pwd))) {
       // 이메일이 인증되었는지 확인
-      if (!user.isVerified) {
-        throw new UnauthorizedException('Email not verified');
+      if (!user.status) {
+        throw new CustomException(ErrorCode.NOT_ACTIVATED_ACCOUNT);
       }
       // 유저 토큰 생성(Secret + Payload)
       const payload = { email };
       const accessToken = this.jwtService.sign(payload);
       return { accessToken };
     } else {
-      throw new UnauthorizedException('Login failed');
+      throw new CustomException(ErrorCode.INCORRECT_PASSWORD);
     }
   }
 
-  async verifyEmail(email: string, code: string): Promise<void> {
-    const user = await this.usersRepository.findOneBy({ email });
-    if (!user) {
-      throw new Error('User not found');
-    }
-    if (user.verificationCode !== code) {
-      throw new Error('Invalid verification code');
+  async verifyEmail(verificationDto: VerificationDto) {
+    const {email, verificationCode} = verificationDto;
+    if (!await this.usersRepository.existsBy({ email, verificationCode })) {
+      throw new CustomException(ErrorCode.INVALID_VERIFICATION);
     }
     // 이메일 인증 상태 업데이트
     await this.usersRepository.updateVerificationStatus(email, true);
+    return "인증 완료되었습니다.";
   }
 }

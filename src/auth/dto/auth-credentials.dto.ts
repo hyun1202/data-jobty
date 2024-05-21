@@ -18,3 +18,14 @@ export class AuthCredentialsDto {
   @ApiProperty({ description: '인증 코드' })
   verificationCode: string;
 }
+
+export class VerificationDto {
+  @ApiProperty({description: '인증 코드'})
+  @IsNotEmpty({ message: '인증 코드는 필수 입력 사항입니다.'})
+  verificationCode: string;
+
+  @ApiProperty({ description: '이메일' })
+  @IsNotEmpty({ message: '이메일은 필수 입력 사항입니다.' })
+  @IsEmail({}, { message: '유효한 이메일 형식이어야 합니다.' })
+  email: string;
+}

@@ -11,11 +11,11 @@ export class UsersRepository extends Repository<User>{
   }
 
 async createUser(authCredentialsDto: AuthCredentialsDto): Promise<void>{
-  const {email, pwd, nickname} = authCredentialsDto;
+  const {email, pwd, nickname, verificationCode} = authCredentialsDto;
   const salt = await bcrypt.genSalt();
   const hashedPwd = await bcrypt.hash(pwd , salt);
 
-    const user = this.create({email, pwd: hashedPwd, nickname});
+    const user = this.create({email, pwd: hashedPwd, nickname, verificationCode});
     try {
       await this.save(user);
     } catch (error) {
@@ -35,7 +35,7 @@ async createUser(authCredentialsDto: AuthCredentialsDto): Promise<void>{
     await this.update({ email }, { verificationCode: code });
   }
 
-  async updateVerificationStatus(email: string, isVerified: boolean): Promise<void> {
-    await this.update({ email }, { isVerified });
+  async updateVerificationStatus(email: string, status: boolean): Promise<void> {
+    await this.update({ email }, { status });
   }
 }
