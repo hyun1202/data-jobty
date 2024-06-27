@@ -18,13 +18,13 @@ export class AuthService {
 
   /**
    * 로그인
-   * @param authCredentialsDto 로그인 정보 (email, password)
+   * @param loginUserDto 로그인 정보 (email, password)
    */
   async signIn(loginUserDto: LoginUserDto): Promise<{ accessToken: string }> {
     const { email, pwd } = loginUserDto;
     const user = await this.usersRepository.findOneBy({ email });
 
-    if (!user && await bcrypt.compare(pwd, user.pwd)) {
+    if (!user || !await bcrypt.compare(pwd, user.pwd)) {
       throw new CustomException(ErrorCode.INCORRECT_PASSWORD);
     }
 
