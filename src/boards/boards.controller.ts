@@ -2,8 +2,10 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, UsePipes, Validation
 import { BoardsService } from "./boards.service";
 import { Board, BoardStatus } from "./board.model";
 import { CreateBoardDto } from "./dto/create-board-dto";
+import { ApiTags } from "@nestjs/swagger";
 
 
+@ApiTags("Community")
 @Controller('boards')
 export class BoardsController {
   constructor(private boardsService: BoardsService) {}
