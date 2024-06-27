@@ -1,7 +1,8 @@
 import { Column, Entity, PrimaryColumn } from "typeorm";
 import { Timestamped } from "../../common/timestamped/time-stamped";
+import { USER_STATUS } from "./user-status";
 
-@Entity({ name : "member" })
+@Entity({ name : "users" })
 export class User extends Timestamped{
   constructor(
     // id: string,
@@ -14,11 +15,11 @@ export class User extends Timestamped{
     this.email = email;
     this.pwd = pwd;
     this.nickname = nickname;
+    this.status = USER_STATUS.temporary.valueOf();
     this.roles = "ROLE_USER";
-    this.withdraw_dt = '';
   }
 
-  @PrimaryColumn({name: "member_id"})
+  @PrimaryColumn({name: "user_id"})
   id : string
   @Column({unique: true})
   email : string
@@ -28,12 +29,23 @@ export class User extends Timestamped{
   nickname : string
   @Column()
   roles : string
-  @Column()
-  withdraw_dt : string
-  @Column({default: false})
-  status : boolean
-  @Column({nullable: true})
-  last_login_dt : Date
+  @Column({ name: "withdraw_dt" , default: null})
+  withdrawDt : Date
+  @Column({ default: false })
+  status : number
+  @Column({ name: "last_login_dt", nullable: true })
+  lastLoginDt : Date
   @Column({ name: "verification_code", nullable: true })
   verificationCode: string;
+
+  withdraw() : void{
+    this.withdrawDt = new Date();
+  }
+
+  checkCertification() : boolean {
+    if (this.status !== USER_STATUS.active) {
+      return false;
+    }
+    return true;
+  }
 }

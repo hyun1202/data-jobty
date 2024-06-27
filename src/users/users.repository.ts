@@ -35,7 +35,7 @@ async createUser(authCredentialsDto: AuthCredentialsDto): Promise<void>{
     await this.update({ email }, { verificationCode: code });
   }
 
-  async updateVerificationStatus(email: string, status: boolean): Promise<void> {
+  async updateVerificationStatus(email: string, status: number): Promise<void> {
     await this.update({ email }, { status });
   }
 }
