@@ -29,9 +29,7 @@ export class AuthService {
     }
 
     // 이메일이 인증되었는지 확인
-    if (!user.checkCertification()) {
-      throw new CustomException(ErrorCode.NOT_ACTIVATED_ACCOUNT);
-    }
+    user.checkCertification();
 
     // 유저 토큰 생성(Secret + Payload)
     const payload = { email };

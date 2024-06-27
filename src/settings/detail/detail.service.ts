@@ -31,7 +31,7 @@ export class DetailService {
     // TODO 회원 탈퇴 처리시 추가할 로직
     // 1. 메뉴 및 블로그 게시글 삭제, 설정 데이터 삭제
     // 2. 회원 탈퇴 처리
-    this.usersService.withdraw(user);
+    await this.usersService.withdraw(user);
   }
 
 

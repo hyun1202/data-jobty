@@ -1,6 +1,8 @@
 import { Column, Entity, PrimaryColumn } from "typeorm";
 import { Timestamped } from "../../common/timestamped/time-stamped";
 import { USER_STATUS } from "./user-status";
+import { CustomException } from "../../common/exception/custom.exception";
+import { ErrorCode } from "../../common/exception/error.code";
 
 @Entity({ name : "users" })
 export class User extends Timestamped{
@@ -40,12 +42,16 @@ export class User extends Timestamped{
 
   withdraw() : void{
     this.withdrawDt = new Date();
+    this.status = USER_STATUS.withdraw;
   }
 
-  checkCertification() : boolean {
-    if (this.status !== USER_STATUS.active) {
-      return false;
+  checkCertification() : void {
+    if (this.status === USER_STATUS.temporary) {
+      throw new CustomException(ErrorCode.NOT_ACTIVATED_ACCOUNT);
     }
-    return true;
+
+    if (this.status === USER_STATUS.withdraw) {
+      throw new CustomException(ErrorCode.ACCOUNT_DISABLED);
+    }
   }
 }

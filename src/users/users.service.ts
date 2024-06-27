@@ -37,6 +37,7 @@ export class UsersService {
    */
   async withdraw(user: User) {
     user.withdraw();
-    this.usersRepository.update(user.email, { withdrawDt: user.withdrawDt });
+    // await this.usersRepository.update(user.email, { withdrawDt: user.withdrawDt });
+    await this.usersRepository.save(user);
   }
 }
