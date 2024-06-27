@@ -1,47 +1,20 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from "@nestjs/common";
-import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { CustomException } from "../common/exception/custom.exception";
-import { ErrorCode } from "../common/exception/error.code";
-import { ApiTags } from "@nestjs/swagger";
+import { Body, Controller, Post } from "@nestjs/common";
+import { UsersService } from "./users.service";
+import { CreateUserDto } from "./dto/create-user.dto";
+import { ApiOperation, ApiTags } from "@nestjs/swagger";
+import { ValidationPipe } from "../common/validation/validation.pipe";
 
 @ApiTags('user')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
-  }
-
-  @Get()
-  async findAll() {
-    return await this.usersService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    throw new CustomException(ErrorCode.ACCOUNT_VALIDATION_FAILED);
-    return this.usersService.remove(+id);
+  @Post('/signup')
+  @ApiOperation({
+    summary: "회원가입",
+    description: "임시로 회원가입, 계정 활성화를 위한 인증코드를 발송한다."
+  })
+  signUp(@Body(new ValidationPipe()) createUserDto: CreateUserDto): Promise<void> {
+    return this.usersService.signUp(createUserDto)
   }
 }

@@ -42,6 +42,11 @@ export class ErrorCode {
     msg: "계정을 찾을 수 없거나 아이디 또는 비밀번호가 맞지 않습니다.\", \"비밀번호가 맞지 않습니다.",
   }
 
+  static ACCOUNT_DISABLED: TCommonCode = {
+    code: 6010,
+    msg: "탈퇴한 계정입니다.",
+  }
+
   static NOT_ACTIVATED_ACCOUNT: TCommonCode = {
     code: 6011,
     msg: "메일 인증이 안된 계정입니다. 메일 인증 완료 후 다시 시도해주세요.",
