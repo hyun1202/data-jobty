@@ -1,11 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
-import { UsersRepository } from "../users/users.repository";
+import { UsersRepository } from "../../users/users.repository";
 import { ExtractJwt, Strategy } from "passport-jwt";
-import { User } from "../users/entities/user.entity";
+import { User } from "../../users/entities/user.entity";
 import * as process from "node:process";
-import { CustomException } from "../common/exception/custom.exception";
-import { ErrorCode } from "../common/exception/error.code";
+import { CustomException } from "../../common/exception/custom.exception";
+import { ErrorCode } from "../../common/exception/error.code";
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -17,11 +17,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
     })
   }
+
   async validate(payload) {
     const {email} = payload;
     const user: User = await this.usersRepository.findOneBy({email:email});
-    // TODO DTO 변환
-
     if (!user) {
       throw new CustomException(ErrorCode.OPERATION_NOT_AUTHORIZED);
     }
