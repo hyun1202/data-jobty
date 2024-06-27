@@ -9,7 +9,7 @@ export class Setting extends Timestamped{
   @PrimaryColumn()
   domain: string;
   @OneToOne(() => User)
-  @JoinColumn({name: "member_id"})
+  @JoinColumn({name: "user_id"})
   user: User;
   @Column({name: "favicon_img", nullable: true})
   faviconImg: string;

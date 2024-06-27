@@ -7,7 +7,7 @@ export class Template extends Timestamped{
   @PrimaryGeneratedColumn({name: "template_id"})
   id: number;
   @OneToOne(() => User)
-  @JoinColumn({name: "member_id"})
+  @JoinColumn({name: "user_id"})
   user: User;
   @Column()
   thumbnail: string;
