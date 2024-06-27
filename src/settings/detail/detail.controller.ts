@@ -1,13 +1,13 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, UseGuards } from "@nestjs/common";
 import { DetailService } from "./detail.service";
-import { CreateDetailDto, CreateDomainDto } from "./dto/create-detail.dto";
-import { UpdateDetailDto } from "./dto/update-detail.dto";
+import { CreateDetailDto } from "./dto/create-detail.dto";
 import { ValidationPipe } from "../../common/validation/validation.pipe";
 import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
-import { GetUser } from "../../auth/get-user.decorator";
+import { GetUser } from "../../auth/decorator/get-user.decorator";
 import { User } from "../../users/entities/user.entity";
 import { AuthGuard } from "@nestjs/passport";
 import { ResponseDetailDto } from "./dto/response-detail.dto";
+import { CreateDomainDto } from "./dto/create-domain.dto";
 
 @ApiTags('setting-detail')
 @Controller('setting')
@@ -16,7 +16,7 @@ import { ResponseDetailDto } from "./dto/response-detail.dto";
 export class DetailController {
   constructor(private readonly detailService: DetailService) {}
 
-  @Post(':domain')
+  @Put(':domain')
   @ApiOperation({
     summary: "설정 저장",
     description: "해당하는 도메인에 토큰 정보로 설정 정보를 저장한다."
@@ -31,7 +31,7 @@ export class DetailController {
     summary: "도메인 저장",
     description: "토큰 정보로 도메인 정보를 저장한다."
   })
-  @Post('/domain')
+  @Post('/domain/')
   async createDomain(@GetUser() user: User, @Body(new ValidationPipe()) createDomainDto: CreateDomainDto) {
     return await this.detailService.createDomain(user, createDomainDto);
   }
@@ -51,7 +51,7 @@ export class DetailController {
   })
   @Get(':domain')
   async getSetting(@GetUser() user: User, @Param('domain') domain: string) {
-    return new ResponseDetailDto(await this.detailService.findOneByDomainAndMemberId(domain, user.id));
+    return new ResponseDetailDto(await this.detailService.findOneByDomainAndUserId(domain, user.id));
   }
 
   @ApiOperation({

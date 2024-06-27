@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryColumn } from "typeorm";
 import { Timestamped } from "../../common/timestamped/time-stamped";
 
-@Entity({ name : "member" })
+@Entity({ name : "users" })
 export class User extends Timestamped{
   constructor(
     // id: string,
@@ -15,10 +15,9 @@ export class User extends Timestamped{
     this.pwd = pwd;
     this.nickname = nickname;
     this.roles = "ROLE_USER";
-    this.withdraw_dt = '';
   }
 
-  @PrimaryColumn({name: "member_id"})
+  @PrimaryColumn({name: "user_id"})
   id : string
   @Column({unique: true})
   email : string
@@ -28,12 +27,16 @@ export class User extends Timestamped{
   nickname : string
   @Column()
   roles : string
-  @Column()
-  withdraw_dt : string
-  @Column({default: false})
+  @Column({ name: "withdraw_dt" })
+  withdrawDt : Date
+  @Column({ default: false })
   status : boolean
-  @Column({nullable: true})
-  last_login_dt : Date
+  @Column({ name: "last_login_dt", nullable: true })
+  lastLoginDt : Date
   @Column({ name: "verification_code", nullable: true })
   verificationCode: string;
+
+  withdraw() : void{
+    this.withdrawDt = new Date();
+  }
 }
