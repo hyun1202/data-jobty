@@ -1,9 +1,11 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { UsersRepository } from "../users/users.repository";
 import { ExtractJwt, Strategy } from "passport-jwt";
 import { User } from "../users/entities/user.entity";
 import * as process from "node:process";
+import { CustomException } from "../common/exception/custom.exception";
+import { ErrorCode } from "../common/exception/error.code";
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -21,8 +23,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     // TODO DTO 변환
 
     if (!user) {
-      // TODO CustomException 적용
-      throw new UnauthorizedException();
+      throw new CustomException(ErrorCode.OPERATION_NOT_AUTHORIZED);
     }
     return user;
   }
