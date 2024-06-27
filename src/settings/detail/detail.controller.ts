@@ -1,10 +1,9 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards } from "@nestjs/common";
 import { DetailService } from "./detail.service";
 import { CreateDetailDto, CreateDomainDto } from "./dto/create-detail.dto";
-import { UpdateDetailDto } from "./dto/update-detail.dto";
 import { ValidationPipe } from "../../common/validation/validation.pipe";
 import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
-import { GetUser } from "../../auth/get-user.decorator";
+import { GetUser } from "../../auth/decorator/get-user.decorator";
 import { User } from "../../users/entities/user.entity";
 import { AuthGuard } from "@nestjs/passport";
 import { ResponseDetailDto } from "./dto/response-detail.dto";
