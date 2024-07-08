@@ -10,6 +10,7 @@ import { EmailService } from './email/email.service';
 import { MailerModule } from "@nestjs-modules/mailer";
 import { BoardsModule } from './boards/boards.module';
 import { TemplateModule } from './settings/template/template.module';
+import { MenuModule } from './settings/menu/menu.module';
 
 @Module({
   imports: [
@@ -48,7 +49,8 @@ import { TemplateModule } from './settings/template/template.module';
     AuthModule,
     TemplateModule,
     AuthModule,
-    BoardsModule
+    BoardsModule,
+    MenuModule
   ],
   controllers: [AppController],
   providers: [AppService, EmailService],

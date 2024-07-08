@@ -1,6 +1,6 @@
 import { CallHandler, ExecutionContext, NestInterceptor } from "@nestjs/common";
 import { map, Observable } from "rxjs";
-import { CommonResult } from "../response/common.result";
+import { CommonResult } from "./common.result";
 
 export interface Response<T> {
   data: T;
