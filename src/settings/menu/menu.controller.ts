@@ -43,7 +43,7 @@ export class MenuController {
     summary: "메뉴 수정",
     description: "해당하는 도메인의 메뉴를 정렬 제외하고 단건 수정한다."
   })
-  @Patch(':domain')
+  @Patch()
   update(@Param('domain') domain: string,
          @GetUser() user: User,
          @Body() updateMenuDto: UpdateMenuDto) {
