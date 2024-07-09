@@ -71,7 +71,6 @@ export class MenuService {
    * @param updateAllMenuDto 수정할 메뉴들 정보
    */
   async allCreateAndUpdateAndRemove(domain: string, userId: string, updateMenuDtos: UpdateMenuDto[]) {
-    //TODO 트랜잭션 처리 필요, 리팩토링 필요, 에러시 어떤 메뉴에서 에러났는지 정보 추가
     const oriMenus: Menu[]  = await this.menuRepository.findMenuOrderById(domain, userId);
     const menuCategorys: BlogMenuCategory[] = await this.blogMenuCategoryRepository.findBy({
       type: MenuType.MAIN
@@ -81,6 +80,7 @@ export class MenuService {
       const mainCategory = menuCategorys.find(mc => mc.id === updateMenuDto.category_id);
       let menu = oriMenus.find(m => m.id === updateMenuDto.menu_id);
       if (!menu) {
+        // 생성
        if (updateMenuDto.edit_type === MenuUpdateType.CREATE) {
          menu = this.createMenu(updateDtoToCreateDto(updateMenuDto), mainCategory, domain);
          return menu;
@@ -88,11 +88,13 @@ export class MenuService {
          throw new CustomException(toErrorcodeById(ErrorCode.FAILED_MENU_CREATED, updateMenuDto.menu_id));
        }
       }
+      // 수정
       menu.updateMenu(mainCategory, updateMenuDto);
 
       return menu;
     });
 
+    // 삭제
     const removeMenuIds = updateMenuDtos
       .filter(menu => menu.edit_type === MenuUpdateType.REMOVE)
       .map(menu => menu.menu_id);
@@ -105,6 +107,12 @@ export class MenuService {
     return await this.findMenus(domain, userId);
   }
 
+  /**
+   * 메뉴 삭제
+   * @param menuId 삭제할 메뉴 아이디
+   * @param domain 도메인
+   * @param userId 유저 아이디
+   */
   async remove(menuId: number, domain: string, userId: string) {
     // 하위 메뉴가 있으면 삭제 불가
     if (await this.menuRepository.existsUpperMenu(menuId, domain, userId)) {
@@ -115,6 +123,12 @@ export class MenuService {
     await this.menuRepository.softRemove(menu);
   }
 
+  /**
+   * 메뉴 단건 조회
+   * @param menuId 메뉴 아이디
+   * @param domain 도메인
+   * @param userId 유저 아이디
+   */
   async findMenu(menuId: number, domain: string, userId: string) {
     const menu: Menu = await this.menuRepository.findMenu(menuId, domain, userId);
 
@@ -124,6 +138,10 @@ export class MenuService {
     return menu;
   }
 
+  /**
+   * 메뉴 메인 카테고리 조회
+   * @param menuCategoryId 메뉴 카테고리 아이디
+   */
   async findMenuCategory(menuCategoryId: number) : Promise<BlogMenuCategory> {
     const menuCategory: BlogMenuCategory = await this.blogMenuCategoryRepository.findOneBy({id: menuCategoryId})
     if (menuCategory == null) {
@@ -132,6 +150,12 @@ export class MenuService {
     return menuCategory;
   }
 
+  /**
+   * 메뉴를 생성한다
+   * @param createMenuDto 생성할 메뉴 정보
+   * @param mainCategory 메인 카테고리 정보
+   * @param domain 도메인
+   */
   private createMenu(createMenuDto: CreateMenuDto, mainCategory: BlogMenuCategory, domain: string) {
     const menu: Menu = Builder(Menu)
       .menuName(createMenuDto.menu_name)
