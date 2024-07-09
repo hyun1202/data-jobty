@@ -20,6 +20,16 @@ export class MenuRepository extends Repository<Menu>{
       .getMany();
   }
 
+  async findMenu(menuId: number, domain: string, userId: string) {
+    return await this.findOneBy({
+      id: menuId,
+      setting: {
+        domain: domain,
+        user: {id: userId}
+      }
+    });
+  }
+
   async existsUpperMenu(upperMenuId: number, domain: string, userId: string) {
    return this.existsBy({upperMenuId: upperMenuId, setting: {domain: domain, user: {id: userId}}});
   }

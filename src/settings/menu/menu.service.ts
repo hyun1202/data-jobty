@@ -66,11 +66,13 @@ export class MenuService {
     // TODO 대메뉴 -> 소메뉴 업데이트 시, 카테고리 upper_menu_id가 사라지게됨 => [카테고리 없음]으로 설정
     const menu: Menu = await this.findMenu(updateMenuDto.menu_id, domain, userId);
     if (updateMenuDto.menu_type === MenuType.MAIN) {
-      menu.updateMainMenu(updateMenuDto.category_id, updateMenuDto.menu_name, updateMenuDto.group_no);
+      const menuCategory = await this.findMenuCategory(updateMenuDto.category_id);
+      menu.updateMainMenu(menuCategory, updateMenuDto.menu_name, updateMenuDto.group_no);
     } else {
       menu.updateSubMenu(updateMenuDto.upper_menu_id, updateMenuDto.menu_name, updateMenuDto.menu_name, updateMenuDto.sort_no);
     }
-    return new UpdateMenuDto(await this.menuRepository.save(menu));
+
+    return new MenuResDto(await this.menuRepository.save(menu));
   }
 
   /**
@@ -122,8 +124,6 @@ export class MenuService {
     // return "성공했습니다.";
   }
 
-
-
   async remove(menuId: number, domain: string, userId: string) {
     // 하위 메뉴가 있으면 삭제 불가
     if (await this.menuRepository.existsUpperMenu(menuId, domain, userId)) {
@@ -135,19 +135,8 @@ export class MenuService {
   }
 
   async findMenu(menuId: number, domain: string, userId: string) {
-    // const menu: Menu = await this.menuRepository.findOneBy({id: menuId, setting: {domain: domain, user: {id: userId}}});
-    const menu = await this.menuRepository.findOne({
-      where: {
-        id: menuId,
-        setting: {
-          domain: domain,
-          user: {
-            id: userId
-          }
-        }
-      },
-      relations: ['setting', 'setting.user']
-    })
+    const menu: Menu = await this.menuRepository.findMenu(menuId, domain, userId);
+
     if (menu == null) {
       throw new CustomException(ErrorCode.NO_MENU_DATA);
     }
@@ -161,5 +150,4 @@ export class MenuService {
     }
     return menuCategory;
   }
-
 }

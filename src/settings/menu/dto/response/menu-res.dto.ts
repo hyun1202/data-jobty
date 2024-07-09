@@ -6,16 +6,19 @@ export class MenuResDto {
   constructor(menu: Menu) {
     this.menu_id = menu.id;
     this.menu_type = menu.type;
+    this.category_id = menu?.menuCategory?.id || null;
     this.category_name = menu?.menuCategory?.categoryName || '';
     this.menu_name = menu.menuName;
     this.group_no = menu.groupNo;
     this.sort_no = menu.sortNo;
-    this.sub = menu?.subs?.map(sub => new SubMenuDto(sub)) ?? null;
+    this.sub = menu?.subs?.map(sub => new SubMenuDto(sub)) || [];
   }
   @ApiProperty({description: '메뉴 분류번호'})
   menu_id: number
   @ApiProperty({description: '메뉴 타입'})
   menu_type: number
+  @ApiProperty({description: '카테고리 분류번호'})
+  category_id: number
   @ApiProperty({description: '카테고리명'})
   category_name: string
   @ApiProperty({description: '메뉴명'})

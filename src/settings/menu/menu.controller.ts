@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, UseGuards, UseInterceptors } from "@nestjs/common";
 import { MenuService } from "./menu.service";
 import { CreateMenuDto } from "./dto/request/create-menu.dto";
 import { UpdateMenuDto } from "./dto/request/update-menu.dto";
@@ -43,7 +43,7 @@ export class MenuController {
     summary: "메뉴 수정",
     description: "해당하는 도메인의 메뉴를 정렬 제외하고 단건 수정한다."
   })
-  @Patch()
+  @Put()
   update(@Param('domain') domain: string,
          @GetUser() user: User,
          @Body() updateMenuDto: UpdateMenuDto) {

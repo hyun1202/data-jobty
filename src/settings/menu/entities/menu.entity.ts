@@ -67,10 +67,8 @@ export class Menu extends Timestamped{
    * @param menuCategory 대메뉴
    * @param menuName 메뉴명
    */
-  updateMainMenu(menuCategoryId: number, menuName: string, groupNo: number) {
-    this.menuCategory = Builder(BlogMenuCategory)
-      .id(menuCategoryId)
-      .build();
+  updateMainMenu(menuCategory: BlogMenuCategory, menuName: string, groupNo: number) {
+    this.menuCategory = menuCategory;
     this.menuName = menuName;
     this.subCategoryName = null;
     this.type = MenuType.MAIN;
