@@ -1,4 +1,13 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  RelationId
+} from "typeorm";
 import { Setting } from "../../detail/entities/detail.entity";
 import { BlogMenuCategory } from "./blog-menu-category.entity";
 import { Timestamped } from "../../../common/timestamped/time-stamped";
@@ -12,7 +21,7 @@ export class Menu extends Timestamped{
   @ManyToOne(() => Setting)
   @JoinColumn({name: "domain"})
   setting: Setting
-  @OneToOne(() => BlogMenuCategory)
+  @ManyToOne(() => BlogMenuCategory)
   @JoinColumn({name: "blog_menu_category_id"})
   menuCategory: BlogMenuCategory
   @Column({ name: "sub_category_name" , nullable: true})
@@ -25,10 +34,10 @@ export class Menu extends Timestamped{
   type: number
   @Column({name: "upper_menu_id", nullable: true})
   upperMenuId: number
-  // @ManyToOne(() => Menu, (menu) => menu.upperMenuId)
-  // @JoinColumn({name: "upper_menu_id"})
-  @ManyToOne(() => Menu, (menu) => menu.subs)
-  @JoinColumn({ name: "upper_menu_id", referencedColumnName: "id" })
+  @ManyToOne(() => Menu, (menu) => menu.subs, {
+    createForeignKeyConstraints: false
+  })
+  @JoinColumn({ name: "upper_menu_id", referencedColumnName: "id", })
   main: Menu
   @OneToMany(() => Menu, (menu) => menu.main)
   subs: Menu[]
