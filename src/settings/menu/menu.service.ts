@@ -63,6 +63,7 @@ export class MenuService {
    * @param updateMenuDto 메뉴 업데이트 정보
    */
   async update(domain: string, userId: string, updateMenuDto: UpdateMenuDto) {
+    // TODO 대메뉴 -> 소메뉴 업데이트 시, 카테고리 upper_menu_id가 사라지게됨 => [카테고리 없음]으로 설정
     const menu: Menu = await this.findMenu(updateMenuDto.menu_id, domain, userId);
     if (updateMenuDto.menu_type === MenuType.MAIN) {
       menu.updateMainMenu(updateMenuDto.category_id, updateMenuDto.menu_name, updateMenuDto.group_no);
@@ -130,7 +131,7 @@ export class MenuService {
     }
 
     const menu = await this.findMenu(menuId, domain, userId);
-    await this.menuRepository.remove(menu);
+    await this.menuRepository.softRemove(menu);
   }
 
   async findMenu(menuId: number, domain: string, userId: string) {
