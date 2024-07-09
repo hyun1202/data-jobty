@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put, UseGuards, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from "@nestjs/common";
 import { MenuService } from "./menu.service";
 import { CreateMenuDto } from "./dto/request/create-menu.dto";
 import { UpdateMenuDto } from "./dto/request/update-menu.dto";
@@ -7,9 +7,6 @@ import { AuthGuard } from "@nestjs/passport";
 import { GetUser } from "../../auth/decorator/get-user.decorator";
 import { User } from "../../users/entities/user.entity";
 import { UpdateAllMenuDto } from "./dto/request/update-all-menu.dto";
-import { TransactionInterceptor } from "../../common/transaction/transaction-interceptor";
-import { TransactionManager } from "../../common/transaction/transaction-manager.decorator";
-import { EntityManager } from "typeorm";
 
 @ApiTags("Menu")
 // @Controller('menu')
@@ -36,7 +33,7 @@ export class MenuController {
   })
   findAll(@Param('domain') domain: string,
           @GetUser() user: User) {
-    return this.menuService.findAll(domain, user.id);
+    return this.menuService.findMenus(domain, user.id);
   }
 
   @ApiOperation({
@@ -66,10 +63,9 @@ export class MenuController {
     description: "해당하는 도메인의 전체 메뉴를 수정한다. 수정 타입 0: 생성, 1: 수정, 2: 삭제"
   })
   @Post('all')
-  @UseInterceptors(TransactionInterceptor)
   async updateAll(@Param('domain') domain: string,
                   @Body() updateAllMenuDto: UpdateAllMenuDto,
                   @GetUser() user: User) {
-    return await this.menuService.allCreateAndUpdateAndRemove(domain, user.id, updateAllMenuDto);
+    return await this.menuService.allCreateAndUpdateAndRemove(domain, user.id, updateAllMenuDto.menus);
   }
 }

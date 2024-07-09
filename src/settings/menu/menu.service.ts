@@ -28,17 +28,10 @@ export class MenuService {
   async create(domain: string, createMenuDto: CreateMenuDto) {
     let mainCategory: BlogMenuCategory = null;
 
-    if (createMenuDto.category_id) {
+    if (createMenuDto.menu_type === MenuType.MAIN && createMenuDto.category_id) {
       mainCategory = await this.findMenuCategory(createMenuDto.category_id);
     }
-
-    const menu: Menu = Builder(Menu)
-      .menuName(createMenuDto.menu_name)
-      .sortNo(createMenuDto.sort_no)
-      .groupNo(createMenuDto.group_no)
-      .build();
-
-    menu.createMenu(domain, createMenuDto.menu_type, mainCategory, createMenuDto.upper_menu_id);
+    const menu = this.createMenu(createMenuDto, mainCategory,domain);
     return new MenuResDto(await this.menuRepository.save(menu));
   }
 
@@ -47,7 +40,7 @@ export class MenuService {
    * @param doamin 도메인
    * @param userId 유저 아이디
    */
-  async findAll(doamin: string, userId: string) {
+  async findMenus(doamin: string, userId: string) {
     const menus = await this.menuRepository.findMenus(doamin, userId);
     // TODO 메뉴 조회 시 게시글 수도 조회해야 함 (entries)
     // 대메뉴에 소메뉴도 나오므로 filter처리
@@ -65,12 +58,8 @@ export class MenuService {
   async update(domain: string, userId: string, updateMenuDto: UpdateMenuDto) {
     // TODO 대메뉴 -> 소메뉴 업데이트 시, 카테고리 upper_menu_id가 사라지게됨 => [카테고리 없음]으로 설정
     const menu: Menu = await this.findMenu(updateMenuDto.menu_id, domain, userId);
-    if (updateMenuDto.menu_type === MenuType.MAIN) {
-      const menuCategory = await this.findMenuCategory(updateMenuDto.category_id);
-      menu.updateMainMenu(menuCategory, updateMenuDto.menu_name, updateMenuDto.group_no);
-    } else {
-      menu.updateSubMenu(updateMenuDto.upper_menu_id, updateMenuDto.menu_name, updateMenuDto.menu_name, updateMenuDto.sort_no);
-    }
+    const menuCategory = await this.findMenuCategory(updateMenuDto.category_id);
+    menu.updateMenu(menuCategory, updateMenuDto);
 
     return new MenuResDto(await this.menuRepository.save(menu));
   }
@@ -81,47 +70,39 @@ export class MenuService {
    * @param userId 유저 아이디
    * @param updateAllMenuDto 수정할 메뉴들 정보
    */
-  async allCreateAndUpdateAndRemove(domain: string, userId: string, updateAllMenuDto: UpdateAllMenuDto) {
+  async allCreateAndUpdateAndRemove(domain: string, userId: string, updateMenuDtos: UpdateMenuDto[]) {
     //TODO 트랜잭션 처리 필요, 리팩토링 필요, 에러시 어떤 메뉴에서 에러났는지 정보 추가
-    const tasks = updateAllMenuDto.menus.map(async menu => {
-      switch (menu.edit_type) {
-        case MenuUpdateType.CREATE:
-          try {
-            await this.create(domain, updateDtoToCreateDto(menu));
-          }catch (e) {
-            console.log(e);
-            throw new CustomException(
-              toErrorcodeById(ErrorCode.UPDATE_FAILED_CREATE_MENU, menu.menu_id)
-            );
-          }
-          break;
-        case MenuUpdateType.UPDATE:
-          try {
-            await this.update(domain, userId, menu);
-          }catch (e) {
-            console.log(e);
-            throw new CustomException(
-              toErrorcodeById(ErrorCode.UPDATE_FAILED_NO_MENU_DATA, menu.menu_id)
-            );
-          }
-          break;
-        case MenuUpdateType.REMOVE:
-          try {
-            await this.remove(menu.menu_id, domain, userId);
-          }catch (e) {
-            console.log(e);
-            throw new CustomException(
-              toErrorcodeById(ErrorCode.UPDATE_FAILED_REMOVE_MENU, menu.menu_id)
-            );
-          }
-          break;
-      }
+    const oriMenus: Menu[]  = await this.menuRepository.findMenuOrderById(domain, userId);
+    const menuCategorys: BlogMenuCategory[] = await this.blogMenuCategoryRepository.findBy({
+      type: MenuType.MAIN
     });
 
-    await Promise.all(tasks);
+    const updatedMenus= updateMenuDtos.map(updateMenuDto => {
+      const mainCategory = menuCategorys.find(mc => mc.id === updateMenuDto.category_id);
+      let menu = oriMenus.find(m => m.id === updateMenuDto.menu_id);
+      if (!menu) {
+       if (updateMenuDto.edit_type === MenuUpdateType.CREATE) {
+         menu = this.createMenu(updateDtoToCreateDto(updateMenuDto), mainCategory, domain);
+         return menu;
+       } else {
+         throw new CustomException(toErrorcodeById(ErrorCode.FAILED_MENU_CREATED, updateMenuDto.menu_id));
+       }
+      }
+      menu.updateMenu(mainCategory, updateMenuDto);
 
-    return await this.findAll(domain, userId);
-    // return "성공했습니다.";
+      return menu;
+    });
+
+    const removeMenuIds = updateMenuDtos
+      .filter(menu => menu.edit_type === MenuUpdateType.REMOVE)
+      .map(menu => menu.menu_id);
+
+    await this.menuRepository.saveMenus(
+      await Promise.all(updatedMenus),
+      removeMenuIds
+    );
+
+    return await this.findMenus(domain, userId);
   }
 
   async remove(menuId: number, domain: string, userId: string) {
@@ -149,5 +130,16 @@ export class MenuService {
       throw new CustomException(ErrorCode.INCORRECT_MAIN_CATEGORY);
     }
     return menuCategory;
+  }
+
+  private createMenu(createMenuDto: CreateMenuDto, mainCategory: BlogMenuCategory, domain: string) {
+    const menu: Menu = Builder(Menu)
+      .menuName(createMenuDto.menu_name)
+      .sortNo(createMenuDto.sort_no)
+      .groupNo(createMenuDto.group_no)
+      .build();
+
+    menu.createMenu(domain, createMenuDto.menu_type, mainCategory, createMenuDto.upper_menu_id);
+    return menu;
   }
 }

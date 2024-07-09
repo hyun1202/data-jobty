@@ -13,6 +13,9 @@ import { BlogMenuCategory } from "./blog-menu-category.entity";
 import { Timestamped } from "../../../common/timestamped/time-stamped";
 import { MenuType } from "./menu-type";
 import { Builder } from "builder-pattern";
+import { UpdateMenuDto } from "../dto/request/update-menu.dto";
+import { CustomException } from "../../../common/exception/custom.exception";
+import { ErrorCode, toErrorcodeById } from "../../../common/exception/error.code";
 
 @Entity({ name : "menu" })
 export class Menu extends Timestamped{
@@ -52,6 +55,7 @@ export class Menu extends Timestamped{
    * @param upperMenuId 상위메뉴 정보
    */
   createMenu(domain: string, type: number, menuCategory: BlogMenuCategory, upperMenuId?: number) {
+    this.checkMainCategory(menuCategory, type);
     this.setting = Builder(Setting)
       .domain(domain)
       .build();
@@ -62,12 +66,21 @@ export class Menu extends Timestamped{
     }
   }
 
+  updateMenu(menuCategory: BlogMenuCategory, updateMenuDto: UpdateMenuDto) {
+    if (updateMenuDto.menu_type === MenuType.MAIN) {
+      this.checkMainCategory(menuCategory, updateMenuDto.menu_type);
+      this.updateMainMenu(menuCategory, updateMenuDto.menu_name, updateMenuDto.group_no);
+    } else {
+      this.updateSubMenu(updateMenuDto.upper_menu_id, updateMenuDto.menu_name, updateMenuDto.menu_name, updateMenuDto.sort_no);
+    }
+  }
+
   /**
    * 대메뉴 단건 업데이트
    * @param menuCategory 대메뉴
    * @param menuName 메뉴명
    */
-  updateMainMenu(menuCategory: BlogMenuCategory, menuName: string, groupNo: number) {
+  private updateMainMenu(menuCategory: BlogMenuCategory, menuName: string, groupNo: number) {
     this.menuCategory = menuCategory;
     this.menuName = menuName;
     this.subCategoryName = null;
@@ -81,7 +94,7 @@ export class Menu extends Timestamped{
    * @param subMenuName 소메뉴 카테고리(사용자 지정)
    * @param menuName 매뉴명
    */
-  updateSubMenu(upperMenuId: number, subCategoryName: string, menuName: string, sortNo: number) {
+  private updateSubMenu(upperMenuId: number, subCategoryName: string, menuName: string, sortNo: number) {
     this.upperMenuId = upperMenuId;
     this.subCategoryName = subCategoryName;
     this.menuName = menuName;
@@ -89,7 +102,13 @@ export class Menu extends Timestamped{
     this.sortNo = sortNo;
   }
 
-  remove(menuId: number) {
-    this.deleteDt
+  /**
+   * 메인 카테고리 데이터 확인
+   * @param menuCategory 메인 카테고리
+   */
+  private checkMainCategory(menuCategory: BlogMenuCategory, type) {
+    if (type === MenuType.MAIN && (menuCategory === null || menuCategory === undefined)) {
+      throw new CustomException(toErrorcodeById(ErrorCode.INCORRECT_MAIN_CATEGORY, this.id));
+    }
   }
 }

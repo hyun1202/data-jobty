@@ -8,7 +8,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: any, host: ArgumentsHost): any {
     const status = exception.getStatus() || 200;
     let errorCode: TCommonCode = exception?.errorCode;
-    const message = errorCode?.msg ?? exception.message;
+    const message = errorCode?.msg ?? exception.response.msg ?? exception.message;
 
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();

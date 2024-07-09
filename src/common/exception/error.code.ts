@@ -3,12 +3,17 @@ export type TCommonCode = {
   success?: boolean, // 기본 값은 false
   code: number,
   msg: string,
+  id?: number | string
 }
 
 export const toErrorcodeById = (commonCode:TCommonCode, id?: number|string, msg?: string): TCommonCode => {
+  if (id !== null && id !== undefined) {
+    msg = `[${id}] ${commonCode.msg}`
+  }
   return {
     code: commonCode.code,
-    msg: msg ?? (id ? id + '' : commonCode.msg)
+    id: id,
+    msg: msg
   }
 }
 
@@ -94,19 +99,14 @@ export class ErrorCode {
     msg: "해당하는 메뉴 데이터를 찾을 수 없습니다.",
   }
 
-  static UPDATE_FAILED_CREATE_MENU: TCommonCode = {
+  static FAILED_MENU_CREATED: TCommonCode = {
     code: 8055,
-    msg: "메뉴 데이터 추가에 실패했습니다.",
+    msg: "메뉴가 존재하지 않아 데이터 추가에 실패했습니다.",
   }
 
-  static UPDATE_FAILED_NO_MENU_DATA: TCommonCode = {
-    code: 8056,
-    msg: "해당하는 메뉴 데이터를 찾을 수 없습니다.",
-  }
-
-  static UPDATE_FAILED_REMOVE_MENU: TCommonCode = {
+  static FAILED_MENU_UPDATED_OR_REMOVED: TCommonCode = {
     code: 8057,
-    msg: "메뉴 데이터 삭제에 실패했습니다.",
+    msg: "메뉴 데이터를 삭제할 수 없거나 수정에 실패했습니다.",
   }
 
 }

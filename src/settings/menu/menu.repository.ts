@@ -1,6 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { DataSource, Repository } from "typeorm";
 import { Menu } from "./entities/menu.entity";
+import { CustomException } from "../../common/exception/custom.exception";
+import { ErrorCode, toErrorcodeById } from "../../common/exception/error.code";
 
 @Injectable()
 export class MenuRepository extends Repository<Menu>{
@@ -32,5 +34,33 @@ export class MenuRepository extends Repository<Menu>{
 
   async existsUpperMenu(upperMenuId: number, domain: string, userId: string) {
    return this.existsBy({upperMenuId: upperMenuId, setting: {domain: domain, user: {id: userId}}});
+  }
+
+  async saveMenus(saveItem: any[], deleteId: any[]) {
+    await this.dataSource.transaction(async manager => {
+      try {
+        await manager.save(saveItem);
+        if (deleteId.length > 0) {
+          await manager.softDelete(Menu, deleteId);
+        }
+      } catch (e) {
+        console.log(e);
+        throw new CustomException(toErrorcodeById(ErrorCode.FAILED_MENU_UPDATED_OR_REMOVED));
+      }
+    });
+  }
+
+  async findMenuOrderById(domain: string, userId: string): Promise<Menu[]>{
+    return await this.find({
+      where: {
+        setting: {
+          domain: domain,
+          user: {id: userId}
+        }
+      },
+      order: {
+        id: "ASC"
+      }
+    });
   }
 }
