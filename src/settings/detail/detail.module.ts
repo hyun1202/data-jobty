@@ -1,6 +1,6 @@
-import { Module } from '@nestjs/common';
-import { DetailService } from './detail.service';
-import { DetailController } from './detail.controller';
+import { Module } from "@nestjs/common";
+import { DetailService } from "./detail.service";
+import { DetailController } from "./detail.controller";
 import { DetailRepository } from "./detail.repository";
 import { AuthModule } from "../../auth/auth.module";
 import { TypeOrmModule } from "@nestjs/typeorm";

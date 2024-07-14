@@ -7,4 +7,5 @@ export class CustomException extends HttpException{
     this.errorCode = errorCode;
   }
   readonly errorCode: TCommonCode;
+  readonly errorMsg: string;
 }

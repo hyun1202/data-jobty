@@ -3,6 +3,18 @@ export type TCommonCode = {
   success?: boolean, // 기본 값은 false
   code: number,
   msg: string,
+  id?: number | string
+}
+
+export const toErrorcodeById = (commonCode:TCommonCode, id?: number|string, msg?: string): TCommonCode => {
+  if (id !== null && id !== undefined) {
+    msg = `[${id}] ${commonCode.msg}`
+  }
+  return {
+    code: commonCode.code,
+    id: id,
+    msg: msg
+  }
 }
 
 export class ErrorCode {
@@ -70,6 +82,31 @@ export class ErrorCode {
   static DOMAIN_NOT_FOUND: TCommonCode = {
     code: 7003,
     msg: "해당 계정에 도메인이 없습니다. 생성 후 다시 시도해주세요.",
+  }
+
+  static EXISTS_LOWER_MENU: TCommonCode = {
+    code: 8052,
+    msg: "해당 메뉴에 하위 메뉴가 있으므로 삭제에 실패했습니다. 하위 메뉴 삭제 완료 후 재시도 해주세요.",
+  }
+
+  static INCORRECT_MAIN_CATEGORY: TCommonCode = {
+    code: 8050,
+    msg: "해당하는 대분류 데이터가 없습니다. 확인 후 다시 시도해주세요.",
+  }
+
+  static NO_MENU_DATA: TCommonCode = {
+    code: 8054,
+    msg: "해당하는 메뉴 데이터를 찾을 수 없습니다.",
+  }
+
+  static FAILED_MENU_CREATED: TCommonCode = {
+    code: 8055,
+    msg: "메뉴가 존재하지 않아 데이터 추가에 실패했습니다.",
+  }
+
+  static FAILED_MENU_UPDATED_OR_REMOVED: TCommonCode = {
+    code: 8057,
+    msg: "메뉴 데이터를 삭제할 수 없거나 수정에 실패했습니다.",
   }
 
 }
